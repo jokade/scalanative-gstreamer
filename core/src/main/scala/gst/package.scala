@@ -100,4 +100,6 @@ package object gst {
     val TRICKMODE_KEY_UNITS :GstSeekFlags = 1 << 7
     val TRICKMODE_NO_AUDIO  :GstSeekFlags = 1 << 8
   }
+
+
 }

@@ -26,7 +26,7 @@ lazy val commonSettings = Seq(
 
 lazy val gstreamer = project.in(file("."))
   .enablePlugins(ScalaNativePlugin)
-  .aggregate(core)
+  .aggregate(core,video,pluginsBase)
   .settings(commonSettings ++ dontPublish:_*)
   .settings(
     name := "scalanative-gstreamer"

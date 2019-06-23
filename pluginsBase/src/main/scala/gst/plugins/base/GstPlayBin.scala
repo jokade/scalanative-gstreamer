@@ -1,7 +1,7 @@
 package gst.plugins.base
 
 import glib.{gint, gulong}
-import gst.GstPipeline
+import gst.{GstPipeline, GstTagList}
 
 import scalanative._
 import unsafe._
@@ -22,6 +22,23 @@ class GstPlayBin extends GstPipeline {
    */
   def uri: String = getStringProp(c"uri")
   def uri_=(uri: String): Unit = setStringProp(c"uri",uri)
+
+  /**
+   * Returns the total number of available audio streams.
+   */
+  def nAudio: gint = getIntProp(c"n-audio")
+
+  def getAudioTags(streamId: Int): GstTagList = GstTagList.getTagList(this,c"get-audio-tags",streamId)
+
+  /**
+   * Returns the total number of available video streams
+   */
+  def nVideo: gint = getIntProp(c"nvideo")
+
+  /**
+   * Returns the total number of available subtitle streams.
+   */
+  def nText: gint = getIntProp(c"n-text")
 
   def onAudioTagsChanged(handler: Function2[GstPlayBin,gint,Unit])(implicit refZone: RefZone, wrapper: CObjectWrapper[GstPlayBin]): gulong =
     connect2(c"audio-tags-changed",(arg1: Ptr[Byte], arg2: Ptr[Byte]) => {

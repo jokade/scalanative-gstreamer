@@ -1,6 +1,6 @@
 package gst
 
-import glib.{GLib, GRefCounter, gint, gpointer, guint32, guint64}
+import glib.{GError, GLib, GRefCounter, gint, gpointer, guint32, guint64}
 
 import scalanative._
 import unsafe._
@@ -23,6 +23,35 @@ class GstMessage extends GstMiniObject {
   def parseStateChanged(oldState: Ptr[GstState], newState: Ptr[GstState], pending: Ptr[GstState]): Unit = extern
 
   /**
+   * Returns the old and new states from this message.
+   *
+   * @return A triple (oldState, newState, pending)
+   */
+  def parseStateChanged(): (GstState,GstState,GstState) = {
+    val oldState = stackalloc[GstState]
+    val newState = stackalloc[GstState]
+    val pending = stackalloc[GstState]
+    parseStateChanged(oldState,newState,pending)
+    (!oldState,!newState,!pending)
+  }
+
+  /**
+   * Extracts the GError and debug string from this message.
+   * The values returned in the output arguments are copies; the caller must free them when done.
+   * @param error
+   * @param debugInfo
+   */
+  def parseError(error: Ptr[Ptr[GError.GErrorStruct]], debugInfo: Ptr[CString]): Unit = extern
+
+  def parseError(): String = {
+    val err = stackalloc[Ptr[GError.GErrorStruct]]
+    parseError(err,null)
+    val errmsg = fromCString((!err)._3)
+    GError.free(!err)
+    errmsg
+  }
+
+  /**
    * Returns the pointer to the source of this message.
    */
   def source(): gpointer = GstMessage.ext.snhelper_gst_message_src(this.__ptr)
@@ -43,7 +72,8 @@ class GstMessage extends GstMiniObject {
   /**
    * Returns the name of this message
    */
-  def name(): CString = GstStructure.__ext.gst_structure_get_name( __ext.gst_message_get_structure(__ptr) )
+  // TODO: avoid wrappers
+  def name(): CString = getStructure().getName()
 
   /**
    * Returns true if the name of this message is euql to the specified CString.
@@ -52,18 +82,7 @@ class GstMessage extends GstMiniObject {
    */
   def isName(s: CString): Boolean =  true //libc.string.strcmp(name(),s) == 0
 
-  /**
-   * Returns the old and new states from this message.
-   *
-   * @return A triple (oldState, newState, pending)
-   */
-  def parseStateChanged(): (GstState,GstState,GstState) = {
-    val oldState = stackalloc[GstState]
-    val newState = stackalloc[GstState]
-    val pending = stackalloc[GstState]
-    parseStateChanged(oldState,newState,pending)
-    (!oldState,!newState,!pending)
-  }
+
 }
 
 object GstMessage {
@@ -85,11 +104,35 @@ object GstMessage {
    * @param name
    * @return
    */
-  def applicationEmpty(src: GstObject, name: CString): GstMessage = new GstMessage(__ext.gst_message_application(src.__ptr,GstStructure.__ext.gst_structure_empty(name)))
+  // TODO: avoid wrappers
+  def applicationEmpty(src: GstObject, name: CString): GstMessage =  application(src,GstStructure.empty(name))
 
 
   @extern
   object ext {
     def snhelper_gst_message_src(msg: Ptr[Byte]): gpointer = extern
   }
+}
+
+
+trait ApplicationMessage {
+  self: Singleton =>
+
+  def name: CString
+
+  def apply(src: GstObject): GstMessage = GstMessage.applicationEmpty(src,name)
+/*
+  def unapply(msg: GstMessage): Boolean =
+    if(msg==null)
+      false
+    else
+      libc.string.strcmp(name,msg.name()) == 0
+*/
+def unapply(msg: GstMessage)(implicit wrapper: CObjectWrapper[GstObject]): Option[GstObject] =
+  if(msg==null)
+    None
+  else if(libc.string.strcmp(name,msg.name())==0)
+    Some(wrapper.wrap(msg.source()))
+  else
+    None
 }
