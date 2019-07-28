@@ -21,7 +21,11 @@ class Player private(implicit refZone: RefZone) {
   private var _state: GstState = GstState.VOID_PENDING
   private var _duration: GstClockTime = GstClockTime.None
 
-  private lazy val playbin = GstElementFactory.make[GstPlayBin]("playbin","playbin")
+  private lazy val playbin = GstElementFactory.make[GstPlayBin]("playbin","playbin").get
+
+  val sink = GstFileSink("out")
+  sink.location = "out.mp4"
+
 
   private lazy val (slider,sliderHandlerId) = {
     val slider = GtkScale.withRange(GtkOrientation.HORIZONTAL, 0, 100, 1)

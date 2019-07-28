@@ -1,4 +1,4 @@
-import gst.Gst
+import gst.{Gst, GstFileSink}
 import gsttutorial5.Player
 import gtk._
 

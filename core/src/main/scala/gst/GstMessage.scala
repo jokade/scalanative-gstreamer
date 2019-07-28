@@ -70,17 +70,17 @@ class GstMessage extends GstMiniObject {
   def getStructure(): GstStructure = extern
 
   /**
-   * Returns the name of this message
+   * Returns the name of this message, or null.
    */
   // TODO: avoid wrappers
-  def name(): CString = getStructure().getName()
+  def name(): CString = if(this.__ptr == null) null else getStructure().getName()
 
   /**
-   * Returns true if the name of this message is euql to the specified CString.
+   * Returns true if the name of this message is equal to the specified CString.
    *
    * @param s
    */
-  def isName(s: CString): Boolean =  true //libc.string.strcmp(name(),s) == 0
+  def isName(s: CString): Boolean =  libc.string.strcmp(name(),s) == 0
 
 
 }

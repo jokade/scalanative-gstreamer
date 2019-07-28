@@ -9,7 +9,9 @@ object GstTag {
     def value: Option[T]
   }
   case class StringValue(tag: StringTag, value: Option[String]) extends TagValue[String]
-  case class UIntValue(tag: UIntTag, value: Option[UInt]) extends TagValue[UInt]
+  case class UIntValue(tag: UIntTag, value: Option[UInt]) extends TagValue[UInt] {
+    def intValue: Option[Int] = value.map(_.toInt)
+  }
 
   sealed trait TagType[T] {
     def name: CString
@@ -49,6 +51,10 @@ object GstTag {
   val Bitrate             = UIntTag(c"bitrate")
   val NominalBitrate      = UIntTag(c"nominal-bitrate")
   val MinimumBitrate      = UIntTag(c"minimum-bitrate")
+  val MaximumBitrate      = UIntTag(c"maximum-bitrate")
+  val Serial              = UIntTag(c"serial")
+  val Encoder             = StringTag(c"Encoder")
+  val EncoderVersion      = UIntTag(c"encoder-version")
 
   lazy val standardTags = Seq(
     Title,

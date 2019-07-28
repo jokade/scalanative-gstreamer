@@ -1,4 +1,4 @@
-import glib.guint64
+import glib.{gint64, guint64}
 
 import scalanative._
 import unsafe._
@@ -75,6 +75,8 @@ package object gst {
     def isValid(time: GstClockTime): Boolean = time != None
   }
 
+  type GstClockTimeDiff = gint64
+
   type GstFormat = Int
   object GstFormat {
     val UNDEFINED :GstFormat = 0
@@ -101,5 +103,28 @@ package object gst {
     val TRICKMODE_NO_AUDIO  :GstSeekFlags = 1 << 8
   }
 
+  type GstFlowReturn = Int
+  object GstFlowReturn {
+    val CUSTOM_SUCCESS_2  = 102
+    val CUSTOM_SUCCESS_1  = 101
+    val CUSTOM_SUCCESS    = 100
+    val OK                = 0
+    val NOT_LINKED        = -1
+    val FLUSHING          = -2
+    val EOS               = -3
+    val NOT_NEGOTIATED    = -4
+    val ERROR             = -5
+    val NOT_SUPPORTED     = -6
+    val CUSTOM_ERROR      = -100
+    val CUSTOM_ERROR_1    = -101
+    val CUSTOM_ERROR_2    = -102
+  }
+
+  type GstPadDirection = Int
+  object GstPadDirection {
+    val UNKNOWN = 0
+    val SRC     = 1
+    val SINK    = 2
+  }
 
 }
