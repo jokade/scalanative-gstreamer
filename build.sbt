@@ -5,7 +5,7 @@ version in ThisBuild := "0.0.1-SNAPSHOT"
 scalaVersion in ThisBuild := "2.11.12"
 
 val Version = new {
-  val obj_interop = "0.0.7-SNAPSHOT"
+  val swog        = "0.1.0-SNAPSHOT"
   val glib        = "0.0.2-SNAPSHOT"
   val smacrotools = "0.0.8"
   val utest       = "0.6.8-SNAPSHOT"
@@ -17,7 +17,7 @@ lazy val commonSettings = Seq(
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
   resolvers += Resolver.sonatypeRepo("snapshots"),
   libraryDependencies ++= Seq(
-    "de.surfice" %%% "scalanative-interop-cobj" % Version.obj_interop,
+    "de.surfice" %%% "swog-cobj" % Version.swog,
     "de.surfice" %%% "scalanative-gobj" % Version.glib,
     "com.lihaoyi" %%% "utest" % Version.utest % "test"
     ),

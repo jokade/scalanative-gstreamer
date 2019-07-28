@@ -73,8 +73,11 @@ class GstTagList extends GstMiniObject {
 
 object GstTagList {
 
-  def getTagList(elem: GstElement, name: CString, streamId: Int): GstTagList =
-    new GstTagList( ext.snhelper_gst_get_taglist(elem.__ptr,name,streamId) )
+  def getTagList(elem: GstElement, name: CString, streamId: Int): Option[GstTagList] =
+    ext.snhelper_gst_get_taglist(elem.__ptr,name,streamId) match {
+      case null => None
+      case ptr => Some(new GstTagList(ptr))
+    }
 
   @extern
   object ext {

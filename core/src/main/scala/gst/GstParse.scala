@@ -11,6 +11,6 @@ import cobj._
  */
 @CObj
 object GstParse {
-  def launch(pipelineDescription: CString)(implicit error: Out[GError]): GstElement = extern
+  def launch(pipelineDescription: CString)(implicit error: ResultPtr[GError]): GstElement = extern
 
 }

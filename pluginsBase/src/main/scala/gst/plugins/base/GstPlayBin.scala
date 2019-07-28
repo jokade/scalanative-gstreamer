@@ -28,7 +28,7 @@ class GstPlayBin extends GstPipeline {
    */
   def nAudio: gint = getIntProp(c"n-audio")
 
-  def getAudioTags(streamId: Int): GstTagList = GstTagList.getTagList(this,c"get-audio-tags",streamId)
+  def getAudioTags(streamId: Int): Option[GstTagList] = GstTagList.getTagList(this,c"get-audio-tags",streamId)
 
   /**
    * Returns the total number of available video streams
